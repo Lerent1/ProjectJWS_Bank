@@ -22,7 +22,7 @@ public class AuthController {
     private final UserService userService;
     private final AuthService authService;
 
-    // ================= REGISTER =================
+    // REGISTER
     @PostMapping("/register")
     public ResponseEntity<Map<String, Object>> register(
             @Valid @RequestBody RegisterRequest request) {
@@ -37,7 +37,7 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    // ================= LOGIN =================
+    // LOGIN
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> login(
             @Valid @RequestBody LoginRequest request) {
@@ -52,7 +52,7 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
-    // ================= REFRESH TOKEN =================
+    // REFRESH TOKEN
     @PostMapping("/refresh")
     public ResponseEntity<Map<String, Object>> refresh(
             @Valid @RequestBody RefreshTokenRequest request) {
@@ -67,7 +67,7 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
-    // ================= LOGOUT =================
+    // LOGOUT
     @PostMapping("/logout")
     public ResponseEntity<?> logout(@RequestBody Map<String, String> req) {
 

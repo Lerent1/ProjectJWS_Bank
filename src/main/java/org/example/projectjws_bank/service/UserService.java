@@ -87,7 +87,7 @@ public class UserService {
     }
 
     public UserResponse getUserById(Long id){
-        User user = userRepository.findById(id)
+        User user = userRepository.findByIdWithDetails(id)
                 .orElseThrow(() -> new NotFoundException("Khong tim thay user"));
 
         return toResponse(user);
@@ -114,7 +114,7 @@ public class UserService {
         userRepository.delete(user);
     }
 
-    // ================= FIX NPE =================
+    // FIX NPE
     private UserResponse toResponse(User user){
 
         return UserResponse.builder()
@@ -135,5 +135,36 @@ public class UserService {
 
     private String generateAccountNumber(){
         return "RB" + System.currentTimeMillis();
+    }
+
+    @Transactional
+    public RegisterResponse createStaff(RegisterRequest request){
+
+        if(userRepository.existsByEmail(request.getEmail())){
+            throw new BadRequestException("Email da ton tai");
+        }
+
+        if(userRepository.existsByUsername(request.getUsername())){
+            throw new BadRequestException("Username da ton tai");
+        }
+
+        Role role = roleRepository.findByRoleName("ROLE_STAFF")
+                .orElseThrow(() -> new NotFoundException("Role STAFF khong tim thay"));
+
+        User user = User.builder()
+                .fullName(request.getFullName())
+                .email(request.getEmail())
+                .username(request.getUsername())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .phone(request.getPhone())
+                .createdAt(LocalDateTime.now())
+                .role(role)
+                .enabled(true)
+                .isKyc(true)
+                .build();
+
+        userRepository.save(user);
+
+        return new RegisterResponse(user.getId(), null);
     }
 }

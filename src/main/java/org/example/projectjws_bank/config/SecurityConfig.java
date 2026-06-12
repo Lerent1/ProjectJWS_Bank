@@ -16,7 +16,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
-
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
@@ -29,23 +28,29 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
 
+                        //PUBLIC
                         .requestMatchers("/api/v1/auth/**").permitAll()
 
+                        // ADMIN
                         .requestMatchers("/api/v1/admin/**")
                         .hasRole("ADMIN")
 
-                        .requestMatchers("/api/v1/staff/**")
-                        .hasAnyRole("STAFF","ADMIN")
+                        // TAFF
+                        .requestMatchers("/api/v1/kyc/**")
+                        .hasAnyRole("STAFF", "ADMIN")
 
+                        // USER MANAGEMENT
                         .requestMatchers("/api/v1/users/**")
-                        .hasAnyRole("STAFF","ADMIN")
+                        .hasRole("ADMIN")
 
+                        // CUSTOMER
                         .requestMatchers("/api/v1/accounts/**")
-                        .hasAnyRole("STAFF","ADMIN")
-
-                        .requestMatchers("/api/v1/customer/**")
                         .hasRole("CUSTOMER")
 
+                        .requestMatchers("/api/v1/transactions/**")
+                        .hasRole("CUSTOMER")
+
+                        // DEFAULT
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(

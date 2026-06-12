@@ -97,7 +97,6 @@ public class AccountService {
         }
 
         acc.setPinCode(passwordEncoder.encode(newPin));
-
         accountRepository.save(acc);
     }
 }

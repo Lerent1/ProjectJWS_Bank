@@ -18,7 +18,7 @@ import java.util.Map;
 public class UserController {
     private final UserService userService;
 
-    // ================= GET ALL =================
+    // GET ALL
     @GetMapping
     public ResponseEntity<Map<String, Object>> getAllUsers(
             @RequestParam(defaultValue = "0") int page,
@@ -37,7 +37,7 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    // ================= GET BY ID =================
+    // GET BY ID
     @GetMapping("/{id}")
     public ResponseEntity<Map<String, Object>> getUserById(
             @PathVariable Long id) {
@@ -52,7 +52,7 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    // ================= UPDATE =================
+    // UPDATE
     @PutMapping("/{id}")
     public ResponseEntity<Map<String, Object>> updateUser(
             @PathVariable Long id,
@@ -68,10 +68,9 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    // ================= DELETE =================
+    // DELETE
     @DeleteMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> deleteUser(
-            @PathVariable Long id) {
+    public ResponseEntity<Map<String, Object>> deleteUser(@PathVariable Long id) {
 
         userService.deleteUser(id);
 

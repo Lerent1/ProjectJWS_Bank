@@ -9,14 +9,25 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User,Long> {
+public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsByUsername(String username);
 
     boolean existsByEmail(String email);
 
-    Optional<User> findById(Long id);
-
-    @Query("SELECT u FROM User u JOIN FETCH u.role WHERE u.username = :username")
+    @Query("""
+        SELECT u FROM User u
+        LEFT JOIN FETCH u.role
+        LEFT JOIN FETCH u.account
+        WHERE u.username = :username
+    """)
     Optional<User> findByUsername(@Param("username") String username);
+
+    @Query("""
+        SELECT u FROM User u
+        LEFT JOIN FETCH u.role
+        LEFT JOIN FETCH u.account
+        WHERE u.id = :id
+    """)
+    Optional<User> findByIdWithDetails(@Param("id") Long id);
 }

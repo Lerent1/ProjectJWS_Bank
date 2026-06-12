@@ -14,7 +14,6 @@ import java.util.Map;
 @RequestMapping("/api/v1/transactions")
 @RequiredArgsConstructor
 public class TransactionController {
-
     private final TransactionService transactionService;
 
     @GetMapping("/account/{accountId}")

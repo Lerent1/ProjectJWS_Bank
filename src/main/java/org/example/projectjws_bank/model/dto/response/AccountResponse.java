@@ -14,12 +14,8 @@ import java.math.BigDecimal;
 public class AccountResponse {
 
     private Long id;
-
     private String accountNumber;
-
     private BigDecimal balance;
-
     private Boolean active;
-
     private Long userId;
 }
