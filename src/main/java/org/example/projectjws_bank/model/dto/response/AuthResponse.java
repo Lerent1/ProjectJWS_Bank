@@ -1,15 +1,14 @@
 package org.example.projectjws_bank.model.dto.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class AuthResponse {
 
     private String accessToken;
+    private String refreshToken;
 }

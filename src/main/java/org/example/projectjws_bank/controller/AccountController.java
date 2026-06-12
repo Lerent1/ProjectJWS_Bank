@@ -20,7 +20,7 @@ public class AccountController {
 
     private final AccountService accountService;
 
-    // ================== GET ACCOUNT ==================
+    // GET ACCOUNT
     @GetMapping("/{accountNumber}")
     public ResponseEntity<Map<String, Object>> getAccount(
             @PathVariable String accountNumber) {
@@ -35,7 +35,7 @@ public class AccountController {
         return ResponseEntity.ok(response);
     }
 
-    // ================== GET BALANCE ==================
+    // GET BALANCE
     @GetMapping("/{accountNumber}/balance")
     public ResponseEntity<Map<String, Object>> getBalance(
             @PathVariable String accountNumber) {
@@ -51,7 +51,7 @@ public class AccountController {
         return ResponseEntity.ok(response);
     }
 
-    // ================== TRANSFER ==================
+    // TRANSFER
     @PostMapping("/transfer")
     public ResponseEntity<Map<String, Object>> transfer(
             @Valid @RequestBody TransferRequest request) {
@@ -69,8 +69,8 @@ public class AccountController {
         return ResponseEntity.ok(response);
     }
 
-    // ================== CHANGE PIN ==================
-    @PutMapping("/change-pin")
+    // CHANGE PIN
+    @PutMapping("/changePin")
     public ResponseEntity<Map<String, Object>> changePin(
             @Valid @RequestBody ChangePinRequest request) {
 

@@ -28,7 +28,7 @@ public class DataSeeder {
     CommandLineRunner initData() {
         return args -> {
 
-            // ===== ROLE =====
+            // ROLE
             if (!roleRepository.existsByRoleName("ROLE_ADMIN")) {
                 roleRepository.save(Role.builder().roleName("ROLE_ADMIN").build());
             }
@@ -41,7 +41,7 @@ public class DataSeeder {
                 roleRepository.save(Role.builder().roleName("ROLE_CUSTOMER").build());
             }
 
-            // ===== ADMIN =====
+            // ADMIN
             if (!userRepository.existsByUsername("admin")) {
 
                 Role adminRole = roleRepository
@@ -61,7 +61,7 @@ public class DataSeeder {
 
                 userRepository.save(admin);
 
-                //TẠO ACCOUNT CHO ADMIN
+                //TẠO ADMIN
                 Account account = Account.builder()
                         .accountNumber("ADMIN001")
                         .pinCode(passwordEncoder.encode("1234"))

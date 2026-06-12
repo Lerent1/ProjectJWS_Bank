@@ -1,7 +1,5 @@
 package org.example.projectjws_bank.controller;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.example.projectjws_bank.exception.BadRequestException;
 import org.example.projectjws_bank.model.dto.response.KycResponse;
@@ -21,12 +19,12 @@ public class KycController {
 
     private final KycService kycService;
 
-    // ================== UPLOAD KYC ==================
+    // UPLOAD KYC
     @PostMapping("/upload")
     public ResponseEntity<Map<String, Object>> uploadKyc(
-            @RequestParam("file") MultipartFile file,
-            @RequestParam("userId") @NotNull Long userId,
-            @RequestParam("documentType") @NotBlank String documentType) {
+            @RequestParam MultipartFile file,
+            @RequestParam Long userId,
+            @RequestParam String documentType) {
 
         // validate file
         if (file.isEmpty()) {
@@ -38,7 +36,7 @@ public class KycController {
         return buildResponse("Upload KYC thanh cong", kyc);
     }
 
-    // ================== APPROVE / REJECT ==================
+    // APPROVE / REJECT
     @PutMapping("/{id}/approval")
     public ResponseEntity<Map<String, Object>> approveKyc(
             @PathVariable Long id,
@@ -53,7 +51,7 @@ public class KycController {
         return buildResponse(message, kyc);
     }
 
-    // ================== COMMON RESPONSE ==================
+    // COMMON RESPONSE
     private ResponseEntity<Map<String, Object>> buildResponse(
             String message, Object data) {
 

@@ -28,7 +28,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, String>> handleBadRequest(BadRequestException ex) {
 
         Map<String, String> error = new HashMap<>();
-        error.put("error", "Bad Request");
+        error.put("error", "Khong hop le");
         error.put("message", ex.getMessage());
 
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
@@ -38,7 +38,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, String>> handleNotFound(NotFoundException ex) {
 
         Map<String, String> error = new HashMap<>();
-        error.put("error", "Not Found");
+        error.put("error", "Khong tim thay");
         error.put("message", ex.getMessage());
 
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
@@ -48,7 +48,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, String>> handleOther(Exception ex) {
 
         Map<String, String> error = new HashMap<>();
-        error.put("error", "Internal Server Error");
+        error.put("error", "Loi may chu");
         error.put("message", ex.getMessage());
 
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);

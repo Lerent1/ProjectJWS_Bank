@@ -1,5 +1,8 @@
 package org.example.projectjws_bank.service;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.projectjws_bank.exception.NotFoundException;
 import org.example.projectjws_bank.model.dto.response.KycResponse;
@@ -13,15 +16,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 public class KycService {
-
     private final KycRepository kycRepository;
     private final UserRepository userRepository;
+    private final Cloudinary cloudinary;
 
-    // ================== UPLOAD ==================
+    // UPLOAD
     public KycResponse uploadKyc(
             MultipartFile file,
             Long userId,
@@ -30,46 +34,70 @@ public class KycService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User khong tim thay"));
 
-        // validate file
         if (file.isEmpty()) {
             throw new RuntimeException("File khong duoc rong");
         }
 
-        // giả lập upload
-        String url = "http://localhost/files/" + file.getOriginalFilename();
+        if (documentType == null || documentType.isBlank()) {
+            throw new RuntimeException("documentType khong duoc rong");
+        }
 
-        KycProfile kyc = KycProfile.builder()
-                .documentUrl(url)
-                .documentType(documentType)
-                .status(KycStatus.PENDING)
-                .submittedAt(LocalDateTime.now())
-                .user(user)
-                .build();
+        String contentType = file.getContentType();
+        if (contentType == null ||
+                (!contentType.startsWith("image/") &&
+                        !contentType.equals("application/pdf"))) {
+            throw new RuntimeException("Chi chap nhan anh hoac PDF");
+        }
 
-        kycRepository.save(kyc);
+        try {
+            Map<String, Object> options = ObjectUtils.asMap(
+                    "folder", "kyc",
+                    "resource_type", "auto"
+            );
 
-        return mapToResponse(kyc);
+            Map<String, Object> uploadResult = cloudinary.uploader().upload(file.getBytes(), options);
+
+            String url = uploadResult.get("secure_url").toString();
+
+            KycProfile kyc = KycProfile.builder()
+                    .documentUrl(url)
+                    .documentType(documentType)
+                    .status(KycStatus.PENDING)
+                    .submittedAt(LocalDateTime.now())
+                    .user(user)
+                    .build();
+
+            kycRepository.save(kyc);
+
+            return mapToResponse(kyc);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Upload file that bai: " + e.getMessage());
+        }
     }
 
-    // ================== APPROVE ==================
+    // APPROVE
+    @Transactional
     public KycResponse approveKyc(Long id, KycAction action) {
 
         KycProfile kyc = kycRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Kyc khong tim thay"));
+                .orElseThrow(() -> new NotFoundException("KYC khong tim thay"));
+
+        User user = kyc.getUser();
 
         if (action == KycAction.APPROVE) {
             kyc.setStatus(KycStatus.CONFIRM);
-            kyc.getUser().setIsKyc(true);
+            user.setIsKyc(true);
         } else {
             kyc.setStatus(KycStatus.REJECT);
         }
 
         kycRepository.save(kyc);
+        userRepository.save(user);
 
         return mapToResponse(kyc);
     }
 
-    // ================== MAPPER ==================
     private KycResponse mapToResponse(KycProfile kyc) {
         return KycResponse.builder()
                 .id(kyc.getId())

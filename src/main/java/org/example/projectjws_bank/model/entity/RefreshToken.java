@@ -18,14 +18,20 @@ public class RefreshToken {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 1000)
+    @Column(nullable = false, unique = true, length = 1000)
     private String token;
 
+    @Column(nullable = false)
     private LocalDateTime expiryDate;
 
-    private Boolean revoked;
+    @Builder.Default
+    @Column(nullable = false)
+    private Boolean revoked = false;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
+    @Builder.Default
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 }
