@@ -116,7 +116,6 @@ public class UserService {
 
     // FIX NPE
     private UserResponse toResponse(User user){
-
         return UserResponse.builder()
                 .id(user.getId())
                 .fullName(user.getFullName())

@@ -18,7 +18,6 @@ import java.util.Map;
 public class AdminController {
     private final UserService userService;
 
-    //CREATE STAFF
     @PostMapping("/createStaff")
     public ResponseEntity<Map<String, Object>> createStaff(
             @RequestBody RegisterRequest request) {

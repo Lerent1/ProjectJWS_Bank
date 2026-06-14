@@ -67,14 +67,31 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
-    // LOGOUT
+//            @RequestHeader("Authorization") String authorizationHeader) {
+//        .logout(authorizationHeader);
+//    }
+
+    // Logout
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(@RequestBody Map<String, String> req) {
+    public ResponseEntity<Map<String, Object>> logout(
+            @RequestBody LogoutRequest request) {
 
-        String refreshToken = req.get("refreshToken");
+        authService.logout(request.getAccessToken());
 
-        authService.logout(refreshToken);
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("message", "Dang xuat thanh cong");
 
-        return ResponseEntity.ok("Logout thanh cong");
+        return ResponseEntity.ok(response);
+    }
+
+    // Quen mat khau
+    @PostMapping("/forgotpassword")
+    public ResponseEntity<?> forgotPassword(
+            @Valid @RequestBody ForgotPasswordRequest request) {
+
+        authService.forgotPassword(request);
+
+        return ResponseEntity.ok("Reset password thanh cong");
     }
 }

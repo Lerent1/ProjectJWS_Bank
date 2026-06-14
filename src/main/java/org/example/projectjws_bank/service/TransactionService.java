@@ -16,7 +16,6 @@ public class TransactionService {
     private final TransactionRepository transactionRepository;
 
     public Page<TransactionResponse> getStatement(Long accountId, int page, int size) {
-
         Pageable pageable = PageRequest.of(
                 page,
                 size,

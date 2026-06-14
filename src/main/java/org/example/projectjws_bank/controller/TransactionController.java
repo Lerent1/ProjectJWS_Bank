@@ -22,8 +22,7 @@ public class TransactionController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size) {
 
-        Page<TransactionResponse> result =
-                transactionService.getStatement(accountId, page, size);
+        Page<TransactionResponse> result = transactionService.getStatement(accountId, page, size);
 
         Map<String, Object> response = new HashMap<>();
         response.put("success", true);
