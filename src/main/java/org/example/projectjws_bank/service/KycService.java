@@ -4,6 +4,7 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.example.projectjws_bank.exception.BadRequestException;
 import org.example.projectjws_bank.exception.NotFoundException;
 import org.example.projectjws_bank.model.dto.response.KycResponse;
 import org.example.projectjws_bank.model.entity.KycProfile;
@@ -12,6 +13,7 @@ import org.example.projectjws_bank.model.entity.enums.KycAction;
 import org.example.projectjws_bank.model.entity.enums.KycStatus;
 import org.example.projectjws_bank.repository.KycRepository;
 import org.example.projectjws_bank.repository.UserRepository;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -28,25 +30,29 @@ public class KycService {
     // UPLOAD
     public KycResponse uploadKyc(
             MultipartFile file,
-            Long userId,
             String documentType) {
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("User khong tim thay"));
+        String username = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
 
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new NotFoundException("User khong ton tai"));
+
+        // validate
         if (file.isEmpty()) {
-            throw new RuntimeException("File khong duoc rong");
+            throw new BadRequestException("File khong duoc rong");
         }
 
         if (documentType == null || documentType.isBlank()) {
-            throw new RuntimeException("documentType khong duoc rong");
+            throw new BadRequestException("documentType khong duoc rong");
         }
 
         String contentType = file.getContentType();
         if (contentType == null ||
                 (!contentType.startsWith("image/") &&
                         !contentType.equals("application/pdf"))) {
-            throw new RuntimeException("Chi chap nhan anh hoac PDF");
+            throw new BadRequestException("Chi chap nhan anh hoac PDF");
         }
 
         try {
@@ -55,7 +61,8 @@ public class KycService {
                     "resource_type", "auto"
             );
 
-            Map<String, Object> uploadResult = cloudinary.uploader().upload(file.getBytes(), options);
+            Map<String, Object> uploadResult =
+                    cloudinary.uploader().upload(file.getBytes(), options);
 
             String url = uploadResult.get("secure_url").toString();
 

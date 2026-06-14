@@ -13,6 +13,7 @@ import java.util.List;
 
 @Service
 public class JwtService {
+
     private static final String SECRET_KEY =
             "mysecretkeymysecretkeymysecretkeymysecretkey";
 
@@ -22,6 +23,10 @@ public class JwtService {
 
     public List<String> extractRoles(String token) {
         return extractAllClaims(token).get("roles", List.class);
+    }
+
+    public Date extractExpiration(String token) {
+        return extractAllClaims(token).getExpiration();
     }
 
     public String generateToken(UserDetails userDetails) {
@@ -41,21 +46,15 @@ public class JwtService {
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
-        String username = extractUsername(token);
-
-        return username.equals(userDetails.getUsername())
+        return extractUsername(token).equals(userDetails.getUsername())
                 && !isTokenExpired(token);
     }
 
     private boolean isTokenExpired(String token) {
-
-        return extractAllClaims(token)
-                .getExpiration()
-                .before(new Date());
+        return extractExpiration(token).before(new Date());
     }
 
     private Claims extractAllClaims(String token) {
-
         return Jwts.parser()
                 .verifyWith(getSignInKey())
                 .build()
@@ -64,9 +63,6 @@ public class JwtService {
     }
 
     private SecretKey getSignInKey() {
-
-        return Keys.hmacShaKeyFor(
-                SECRET_KEY.getBytes()
-        );
+        return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
     }
 }

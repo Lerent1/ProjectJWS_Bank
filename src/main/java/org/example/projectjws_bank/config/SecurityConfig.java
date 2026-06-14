@@ -35,6 +35,9 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/admin/**")
                         .hasRole("ADMIN")
 
+                        .requestMatchers("/api/v1/kyc/upload")
+                        .hasRole("CUSTOMER")
+
                         // TAFF
                         .requestMatchers("/api/v1/kyc/**")
                         .hasAnyRole("STAFF", "ADMIN")
@@ -60,32 +63,6 @@ public class SecurityConfig {
 
         return http.build();
     }
-
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity http)
-//            throws Exception {
-//
-//        http
-//                .csrf(csrf -> csrf.disable())
-//                .sessionManagement(session ->
-//                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-//                .authorizeHttpRequests(auth -> auth
-//
-//                        .requestMatchers("/api/v1/auth/**").permitAll()
-//
-//                        .requestMatchers("/api/v1/users/**").permitAll()
-//
-//                        .requestMatchers("/api/v1/accounts/**").permitAll()
-//
-//                        .anyRequest().authenticated()
-//                )
-//                .addFilterBefore(
-//                        jwtAuthenticationFilter,
-//                        UsernamePasswordAuthenticationFilter.class
-//                );
-//
-//        return http.build();
-//    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {

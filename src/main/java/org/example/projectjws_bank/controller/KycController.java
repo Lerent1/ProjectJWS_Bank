@@ -23,15 +23,13 @@ public class KycController {
     @PostMapping("/upload")
     public ResponseEntity<Map<String, Object>> uploadKyc(
             @RequestParam MultipartFile file,
-            @RequestParam Long userId,
             @RequestParam String documentType) {
 
-        // validate file
         if (file.isEmpty()) {
             throw new BadRequestException("File khong duoc rong");
         }
 
-        KycResponse kyc = kycService.uploadKyc(file, userId, documentType);
+        KycResponse kyc = kycService.uploadKyc(file, documentType);
 
         return buildResponse("Upload KYC thanh cong", kyc);
     }
